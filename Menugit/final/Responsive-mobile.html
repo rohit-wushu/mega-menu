@@ -1,0 +1,2358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <title>Mobile Navigation</title>
+    <style>
+        @media(min-width: 991px) {
+            .mobile-menu-wrapper {
+                display: none !important;
+            }
+        }
+
+        .mobile-menu-wrapper ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .mobile-page-header button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 100%;
+        }
+
+        .mobile-page-header a {
+            text-decoration: none;
+        }
+
+        .mobile-page-header button,
+        a {
+            color: #000;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background: #d1b39f;
+        }
+
+        .notification {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 5px 15px;
+            text-align: center;
+            z-index: 1;
+            background: #fffbbc;
+        }
+
+        .notification a {
+            text-decoration: underline;
+        }
+
+
+
+        .mobile-page-header {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            color: #fff;
+        }
+
+        .mobile-page-header .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+            padding: 0 20px;
+            background: #fff;
+        }
+
+        .mobile-page-header .header-bar .brand {
+            font-weight: bold;
+        }
+
+        .mobile-page-header .header-bar .social {
+            display: flex;
+        }
+
+        .mobile-page-header .header-bar svg {
+            fill: #fff;
+        }
+
+        .mobile-page-header .mobile-menu-wrapper {
+            display: none;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            width: 70%;
+            height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+
+        .mobile-page-header .mobile-menu-wrapper.is-visible {
+            display: block;
+        }
+
+        .mobile-page-header .list-wrapper {
+            height: 100%;
+            overflow-y: auto;
+            background: #ffff;
+            border-top: 3px solid #9d9ace;
+        }
+
+        .mobile-page-header .list-wrapper:nth-child(2),
+        .mobile-page-header .list-wrapper:nth-child(3) {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            transform: translateX(100%);
+            backface-visibility: hidden;
+            transition: transform 0.5s;
+            /* padding: 20px 0; */
+        }
+
+        .mobile-page-header .list-wrapper:nth-child(2).is-visible,
+        .mobile-page-header .list-wrapper:nth-child(3).is-visible {
+            transform: none;
+        }
+
+        .mobile-page-header .list-wrapper:nth-child(1)>ul>li>.sub-menu,
+        .mobile-page-header .list-wrapper:nth-child(2) .level-3 {
+            display: none;
+        }
+
+        .mobile-page-header .mobile-menu-wrapper a {
+            display: inline-block;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .mobile-page-header .mobile-menu-wrapper a.nested {
+            /* text-decoration: underline; */
+            width: 85%;
+        }
+
+
+        /* .mobile-page-header .mobile-menu-wrapper a:hover,
+        .mobile-page-header .mobile-menu-wrapper a.is-active {
+            color: #fffbbc;
+        } */
+
+        .mobile-page-header .mobile-menu-wrapper a:hover::before,
+        .mobile-page-header .mobile-menu-wrapper a.is-active::before {
+            content: "✦";
+            position: absolute;
+            top: 50%;
+            right: -20px;
+            transform: translateY(-50%);
+            color: #fffbbc;
+        }
+
+        .mobile-page-header .back-one-level {
+            display: flex;
+            align-items: center;
+            padding: 20px 10px 20px;
+            background: #c5c3e5;
+            width: 100%;
+        }
+
+        .mobile-page-header .back-one-level svg {
+            fill: var(--white);
+            margin-right: 10px;
+        }
+
+        .menu-mobile-icon {
+            background-color: #00a0a8;
+            width: 20px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .mobile-page-header .mobile-menu-title {
+            background: #e9ecff;
+            padding: 30px;
+            color: #000;
+        }
+
+        .mobile-page-header .list-wrapper h2 {
+            font-size: 16px;
+        }
+
+        .login-mobile-btn {
+            padding: 10px 15px;
+            color: #000;
+            border-radius: 4px;
+            border: 2px solid #00a0a8;
+            background: #00a0a8;
+            cursor: pointer;
+            transition: .5s;
+            width: fit-content;
+        }
+
+
+        .mobile-page-header .mobile-menu-wrapper a.nested::after {
+            position: absolute;
+            content: '';
+            background-image: url(../src/menu-next.png);
+            background-repeat: no-repeat;
+            width: 24px;
+            height: 24px;
+            right: 0;
+            top: 5px;
+        }
+
+        .menu li,
+        .sub-menu li {
+            border-bottom: 1px solid #c5c3e5;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 19px;
+        }
+
+        .app-download-wrapper {
+            width: 100%;
+            font-size: 16px;
+            font-weight: 700;
+            padding: 20px 0;
+            background: #fff;
+            color: #24272c;
+            letter-spacing: -0.5px;
+            position: relative;
+        }
+        .title-list{
+            background-color: #d1b39f;
+        }
+
+        .download_txt {
+            width: 60%;
+            display: inline-block;
+            margin-top: -2px;
+        }
+
+        .download_title {
+            display: block;
+        }
+
+        .download_Rating {
+            font-size: 12px;
+            font-weight: 400;
+            letter-spacing: normal;
+            display: block;
+        }
+
+        .download_Rating img {
+            width: 14px;
+            display: inline-block;
+            margin-right: 4px;
+            vertical-align: -1px;
+        }
+
+        .download_Offr {
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: normal;
+        }
+
+        .app-download-wrapper .hbg_Store {
+            display: block !important;
+            position: absolute !important;
+            right: 0;
+            top: 20px;
+            width: 40%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="mobile-page-header">
+        <nav>
+            <div class="header-bar">
+                <img src="https://cdn2.healthians.com/img/healthians-logo.svg" alt="Healthians" style="max-width: 135px">
+                    <!-- <a href="" class="brand">BRAND</a> -->
+                <button class="toggle-menu" type="button">
+                    <img src="../src/hamburger.png" class="menu-mobile-icon">
+                </button>
+            </div>
+            <div class="mobile-menu-wrapper" id="mobile-menu-id">
+                <div class="list-wrapper">
+                    <div class="mobile-menu-title">
+                        <h2>Welcome to Healthians</h2>
+                        <div class="login-mobile-btn">
+                            <a href="javascript:void(0)">Login / Register</a>
+                        </div>
+                    </div>
+                    <ul class="menu level-1">
+                        <li><a href="">Home</a> </li>
+                        <!-- BLOOD TEST SECTION STARTS HERE -->
+                        <li><a href="" class="nested">Blood Test </a>
+                            <ul class="sub-menu level-2">
+                                <li>
+                                    <a href="" class="nested">Popular Packages</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Healthians Full Body Checkup With Thyroid
+                                                And CBC</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Ayushman Package</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Basic Screening Package 4.0 With Allergy By
+                                                Elisa Method</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Healthy India 2023 Full Body Checkup With
+                                                Vitamin Screening And Allergy Screening By ImmunoCAP</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Healthians Sickle Cell Anemia Detection
+                                                Package</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Basic Screening Package 3.0</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Healthians 100% Good Health Package</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Healthians Diabetic Checkup</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Early Pregnancy Checkup</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Basic Screening Package 3.0 With Allergy By
+                                                Elisa Method</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Healthy India 2023 Full Body Checkup -
+                                                ADVANCE With Allergy Screening By ImmunoCAP</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">CRP (C Reactive Protein) Quantitative,
+                                                Serum</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Swasth Bharat Non Fasting Package</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Basic Screening Package 4.0</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Healthy India 2023 Full Body Checkup With
+                                                Vitamin Screening</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">D-Dimer Quantitative</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)" class="more-link">more...</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a href="" class="nested">Popular Tests</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Covid RT-PCR Test</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Hormone Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Thyroid Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Amylase Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Cholesterol Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Lipid Profile Test</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Sugar Test</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Vitamin Test</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Fever Test</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Iron Studies Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Allergy Testing</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Kidney Function Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">HIV Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Anemia Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Hba1C Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Pancreatitis Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Uric Acid Test</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Anti HCV Test</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Immunity Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Viral Marker Test</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">CBC Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Liver Function Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">STD Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Arthritis Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Hbsag Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Pcos Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Vitamin B12 Test</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Chikungunya Test</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Malaria Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Diabetes Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">PSA Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Urine Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Ca125 Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Hepatitis B Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Stool Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Vitamin D Test</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Dengue Test</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Typhoid Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)" class="more-link">more...</a>
+                                        </li>
+
+
+                                    </ul>
+                                </li>
+
+
+
+                                <li>
+                                    <a href="" class="nested">Tests By Unhealthy Habits</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Alcoholism</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Junk Food</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Sleeplessness</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Anger</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Low Iron Diet</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Smoking</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Eating Poorly</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Medicine Overuse</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Stress</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Heartburn</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Poor Nutrition</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Zero Exercise</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)" class="more-link">more...</a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+
+
+
+                                <li>
+                                    <a href="" class="nested">Tests By Health Risks</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Acidity Test</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)"">Bone Test</a>
+                                          </li>
+
+                                     <li class=">
+                                                <a href="javascript:void(0)">Fatigue Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Hormones Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Jaundice Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Obesity Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Vitamins Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Allergy Test</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Cancer Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Fever Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Hypertension Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Joints Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Pregnancy Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Anaemia Test</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Diabetes Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Heart Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Immunity Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Kidney Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Std Test</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Arthritis Test</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Digestion Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Hepatitis Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Infections Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Liver Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Thyroid Test</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)" class="more-link">more...</a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+
+
+                                <li>
+                                    <a href="" class="nested">GOVT Panel Health Tests</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">CGHS</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Delhi Police</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">SSB</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">DJB</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Finance Ministry</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Delhi Fire Service</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Ministry Of Health And Family Welfare</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Delhi High Court</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Delhi Food & Supplies</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Delhi Irrigation & Flood Department</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Delhi Labour Department</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">ECHS</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">CRPF</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">NSG</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Safdarjung</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Ministry Of Home Affairs</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">BSES-Rajdhani</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Delhi Home Guard And Civil</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Delhi PWD</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Delhi DM And SDM Office</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Delhi Tourism Department</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">IGL</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">DGEHS</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">CISF</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">ITBP</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">AIIMS</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Income Tax Department</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">HRD Ministry</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Delhi Law And Judicial/Courts</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Drug Control Department</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Delhi Disaster Management Department</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Child & Women Department</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">NDMC</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">BSF</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">DTC</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">RML Hospital</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">GST Department</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Ministry Of Rural Development</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Delhi Excise Department</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Delhi Social Welfare Department</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Delhi Health & Hospitals</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)" class="more-link">more...</a>
+                                        </li>
+
+
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- BLOOD TEST SECTION END HERE -->
+
+
+
+
+
+                        <!-- X-RAYS & SCANS SECTION STARTS HERE -->
+                        <li><a href="" class="nested">X-Rays & Scans</a>
+                            <ul class="sub-menu level-2">
+                                <li>
+                                    <a href="" class="nested">X-Rays</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Abdominal X-Ray</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Pelvis X-Ray</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Cervical X-Ray</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Chest X-Ray</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Knee X-Ray</a>
+                                        </li>
+
+                                        <li class="more-link">
+                                            <a href="javascript:void(0)">more...</a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+
+
+
+                                <li>
+                                    <a href="" class="nested">Ultrasound</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Abdominal Ultrasound</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Liver Ultrasound</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Doppler Scan</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Breast Ultrasound</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Pelvis Ultrasound</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">NT Scan</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Kidney Ultrasound</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Pregnancy Ultrasound</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">TIFFA Scan</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Level 2 Ultrasound</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Scrotal Ultrasound</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">TVS Ultrasound</a>
+                                        </li>
+
+                                        <li class="more-link">
+                                            <a href="javascript:void(0)">more...</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+
+
+                                <li>
+                                    <a href="" class="nested">CT SCAN</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Heart CT Scan</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Chest CT Scan</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">CECT Scan</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Sinus CT Scan</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">CT KUB Scan</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">CT Coronary Angiography</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Abdominal CT Scan</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">CT PNS Scan</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">HRCT Scan</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Brain CT Scan</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">CBCT Scan</a>
+                                        </li>
+
+                                        <li class="more-link">
+                                            <a href="javascript:void(0)">more...</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+
+                                <li>
+                                    <a href="" class="nested">MRI Scan</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Brain MRI Scan</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Ankle MRI Scan</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">MRI Angiogram</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">MRI Lumbar Spine Scan</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Shoulder MRI Scan</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">MRI Cervical Spine</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Pelvis MRI Scan</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">3T MRI Scan</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">MRI Dorsal Spine</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">MRI Knee Scan</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">MRCP Scan</a>
+                                        </li>
+
+
+
+                                        <li class="more-link">
+                                            <a href="javascript:void(0)">more...</a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a href="" class="nested">PET Test</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Heart PET Scan</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">PSMA PET Scan</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Brain PET Scan</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Dotanoc PET Scan</a>
+                                        </li>
+
+                                        <li class="more-link">
+                                            <a href="javascript:void(0)">more...</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a href="" class="nested">PFT Test</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Arterial Blood Gas Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">DLCO Test</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Body Plethysmography</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Pulse Oximetry Test</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Bronchial Provocation Test</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Spirometry Test</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">FeNO Test</a>
+                                        </li>
+
+                                        <li class="more-link">
+                                            <a href="javascript:void(0)">more...</a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+                                <li><a href="#">ECG Test</a></li>
+                                <li><a href="#">EEG Test</a></li>
+                                <li><a href="#">ECHO Test</a></li>
+                                <li><a href="#">TMT Test</a></li>
+                                <li><a href="#">Dexa Scan</a></li>
+                                <li><a href="#">MAMMOGRAPHY</a></li>
+                                <li><a href="#">EMG & NCV Test</a></li>
+                            </ul>
+                        </li>
+                        <!-- X-Rays & Scans SECTION END HERE -->
+
+
+                        <li>
+                            <a href="#">Genetic Testing</a>
+                        </li>
+
+
+                        <!-- Doctor Consultation SECTION STARTS HERE -->
+                        <li>
+                            <a href="" class="nested">Doctor Consultation</a>
+                            <ul class="sub-menu level-2">
+                                <li>
+                                    <a href="" class="nested">Specialities</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Ayurvedic</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Diabetologist</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Gynecologist</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Orthopaedic</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Dentist</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Neurosurgeon</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Urologist</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Cardiologist</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">ENT</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Homeopathy</a>
+                                        </li>
+
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Physiotherapist</a>
+                                        </li>
+
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Endocrinologist</a>
+                                        </li>
+
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Oncologist</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Pediatrician</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Gastroenterologist</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Neurologist</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Sexologist</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Fertility Specialist</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Psychiatrist</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Dermatologist</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Physician</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Ophthalmologist</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Andrologist</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Nephrologist</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Pulmonologist</a>
+                                        </li>
+
+
+                                        <li class="more-link">
+                                            <a href="javascript:void(0)">more...</a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+
+
+                                <li>
+                                    <a href="" class="nested">Symptoms</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Fatigue</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Sweats</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Cough & Cold</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Vomiting</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Flatulence</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Rash</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Vaginal Infections</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Hearing Loss</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Blurred Vision</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Body Aches</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Fever</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Swelling</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Constipation</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Abdominal Pain</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Heartburn</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Skin Lump</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Toothache</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Headache</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Depression</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Breathing Difficulty</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Gas</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Weight Loss</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Diarrhea</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Bloating</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Blister</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Chest Pain</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Ear Pain</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Insomnia</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Back Pain</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Neck Pain</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Dizziness</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Muscle Weakness</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Nausea</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Blood In Stool</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Itching</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Irregular Periods</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Sore Throat</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Muscle Cramps</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Erectile Dysfunction</a>
+                                        </li>
+
+
+                                        <li class="more-link">
+                                            <a href="javascript:void(0)">more...</a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+
+
+                                <li>
+                                    <a href="" class="nested">Medical Conditions</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Abdominal Pain During Pregnancy</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Constipation During Pregnancy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Headaches During Pregnancy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Low Blood Pressure Pregnancy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Stomach Pain During Pregnancy</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Anemia In Pregnancy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Cramps During Pregnancy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Heartburn During Pregnancy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Medical Termination Of Pregnancy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Third Trimester Pregnancy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Back Pain During Pregnancy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Dizziness During Pregnancy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">High Risk Pregnancy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Second Trimester Of Pregnancy</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Weight Gain During Pregnancy</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Breast Pain In Pregnancy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">First Trimester Of Pregnancy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Leg Pain During Pregnancy</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Spotting During Pregnancy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">White Discharge During Pregnancy</a>
+                                        </li>
+
+
+                                        <li class="more-link">
+                                            <a href="javascript:void(0)">more...</a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Doctor Consultation SECTION END HERE -->
+
+
+     
+                        <!-- SURGERY STARTS HERE -->
+                        <li>
+                            <a href="" class="nested">Surgery</a>
+                            <ul class="sub-menu level-2">
+
+                                <li>
+                                    <a href="" class="nested">OPD with Surgeons</a>
+                                    <ul class="sub-menu level-3">
+                                        <li class="title-list">
+                                            <p style="color:#fff; margin: 0;">ORTHOPAEDICS</p>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Dr Surya Bhan</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Dr Deepak Thakur</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Dr Dattatreya Mohapatra</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Dr Vaibhav Jain</a>
+                                        </li>
+                                        <li class="title-list">
+                                            <p style="color:#fff; margin: 0;">NEUROLOGY</p>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Dr Cankatika Choudhury</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Dr Akhil Sahib</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Dr Shamsher Dwivedee</a>
+                                        </li>
+
+                                        <li class="title-list">
+                                            <p style="color:#fff; margin: 0;">NEUROSURGERY</p>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Dr Krishna K Choudhary</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Dr Manoj Kumar</a>
+                                        </li>
+
+                                        <li class="title-list">
+                                            <p style="color:#fff; margin: 0;">UROLOGY</p>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Dr Mrigank Shekhar Jha</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+
+                                <li>
+                                    <a href="" class="nested">Neurosurgery</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Skull Base Surgery</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Craniotomy Surgery for Brain Tumours</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Epilepsy Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Endoscopic Pituitary Tumour Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Disc Surgery</a>
+                                        </li>
+                                       
+                                    </ul>
+                                </li>
+
+
+                                <li>
+                                    <a href="" class="nested">Gastroenterology</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Gallstone Removal Surgery</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Ulcerative Colitis Treatment</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Rectal Carcinoma Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Colonic Cancer Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Bariatric Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Surgical Obstructive Jaundice</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Irritable Bowel Syndrome (IBS)Treatment</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Stomach Carcinoma Treatment</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Cirrhosis Of Liver Treatment</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Portal Hypertension Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Cystic Tumors Of Pancreas Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Biliary Fistula Surgery</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Common Bile Duct Stones (CBD) Treatment</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Small Bowel Tumour</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Colonic Polyposis Treatment</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Crohns Disease Treatment</a>
+                                        </li>
+                                       
+                                    </ul>
+                                </li>
+
+                                
+                                <li>
+                                    <a href="" class="nested">Orthopaedics</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Knee Replacement Surgery</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Hip Replacement Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Shoulder Replacement Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Arthroscopic Meniscal Repair</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Arthroscopic Bankart Repair For Recurrent
+                                                Shoulder Dislocation</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">ACL Tear Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Rotator Cuff Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Revision Total Hip Replacement</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Intra-articular Injection</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Carpal Tunnel Syndrome Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Ankle Arthroscopy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">High Tibial Osteotomy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Fixation Of Hip Fracture</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Shoulder Arthroscopy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Partial Knee Replacement</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Hemiarthroplasty</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Corrective Osteotomy Surgery</a>
+                                        </li>
+
+                                       
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a href="" class="nested">Urology</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Kidney Stone Surgery</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Bladder Cancer Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Prostate Cancer Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">VVF Repair Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Pyeloplasty Surgery</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Hydrocele Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Penis Cancer Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Kidney Autotransplant Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Laser Ureteric Stone Surgery</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Cystoscopy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Laser Prostatectomy Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Laser Bladder Stone Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Incontinence Surgery</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Phimosis Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Kidney Cancer Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Laser HoLEP Prostate Surgery</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Penile Prosthesis For Erectile Dysfunction
+                                                Surgery</a>
+                                        </li>
+                                       
+                                    </ul>
+                                </li>
+
+
+                                <li>
+                                    <a href="" class="nested">Practology</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Piles Surgery</a>
+                                        </li>
+
+
+                                        <li>
+                                            <a href="javascript:void(0)">Rectal Prolapse Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Anal Fistula Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Anal Fissure Surgery</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Pilonidal Sinus Surgery</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+
+                                
+                                <li>
+                                    <a href="" class="nested">Laparoscopy</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Gallstones Surgery</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Appendicitis Surgery</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Hernia Surgery</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+
+                                 
+                                <li>
+                                    <a href="" class="nested">ENT</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Adenoidectomy</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Myringoplasty Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Sinus Surgery</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Tonsillectomy Surgery</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Tympanoplasty Surgery</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Septorhinoplasty</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Mastoid Surgery</a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a href="" class="nested">Gynaecology</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Hysterectomy Surgery</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Caesarean C-Section Surgery</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Dilation And Curettage Surgery</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Uterine Fibroids Surgery</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+
+                                <li>
+                                    <a href="" class="nested">Opththalmolgy</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Cataract Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">LASIK Eye Surgery</a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a href="javascript:void(0)">Cosmetic</a>
+                                </li>
+
+                                <li>
+                                    <a href="" class="nested">Organ Transplant</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Kidney Transplant Surgery</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Liver Transplant Surgery</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                        <!-- SURGERY ENDS HERE -->
+
+
+
+                         <!-- SUPPLEMENTS SECTION STARTS HERE -->
+                         <li>
+                            <a href="" class="nested">Supplements</a>
+                            <ul class="sub-menu">
+                                <li><a href="#">Diabeat-Ease</a></li>
+                                <li><a href="#">Digest-Plus</a></li>
+                                <li><a href="#">Joint-Plus</a></li>
+                                <li><a href="#">Thyro-Fix</a></li>
+
+                                <li><a href="#">Calci-Build</a></li>
+                                <li><a href="#">Hair-Power</a></li>
+                                <li><a href="#">LIV-UP</a></li>
+                                <li><a href="#">Tone-Up</a></li>
+                                <li><a href="#">Brain-Power</a></li>
+                                <li><a href="#">Heart-Up</a></li>
+                                <li><a href="#">Nutri-Boost</a></li>
+                                <li><a href="#">Vitamin B12</a></li>
+                                <li><a href="#">Vitamin D3</a></li>
+                                <li><a href="#">Confi-Boost</a></li>
+                                <li><a href="#">Immuno-Plus</a></li>
+                                <li><a href="#">Piles-Care</a></li>
+                                <li><a href="#">Vari-Cosy</a></li>
+                                <li><a href="#">Iron-Power</a></li>
+                                <li><a href="#">Fem-Up</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- SUPPLEMENTS ENDS HERE -->
+
+
+                         <!-- HEALTH TIPS STARTS HERE -->
+                         <li>
+                            <a href="" class="nested">Health Tips</a>
+                            <ul class="sub-menu level-2">
+                                <li><a href="#">Healthians Special</a></li>
+                                <li>
+                                    <a href="" class="nested">Disease Management</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Allergy</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Autoimmune Diseases</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Dengue/Malaria/Chikungunya</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Hepatitis</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Kidney</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Stomach Ailments</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Anemia</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Blood Pressure</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Diabetes</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">HIV/AIDS/STD</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Liver</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Stroke</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Arthritis</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Cancer</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Eye Problems</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Hormonal Imbalance</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Menstrual Problems</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Thyroid</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Asthma</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Deficiencies</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Heart Diseases</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Infection/Flu/Viral</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Skin & Hair Problems</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+
+                                <li>
+                                    <a href="" class="nested">Lifestyle & Wellness</a>
+                                    <ul class="sub-menu level-3">
+                                        <li>
+                                            <a href="javascript:void(0)">Addiction Management</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Sexual Wellness</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Fitness</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Stress</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Nutrition/Recipes</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Vitamins/Supplements/Medicines</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Remedies</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)">Weight Management</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a href="javascript:void(0)">Men Health</a>
+                                </li>
+
+                                <li>
+                                    <a href="javascript:void(0)">Women Health</a>
+                                </li>
+
+                                <li>
+                                    <a href="javascript:void(0)">Kids Health</a>
+                                </li>
+
+                                <li>
+                                    <a href="javascript:void(0)">Doctor Videos</a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                        <!-- HEALTH TIPS  ENDS HERE -->
+
+
+                        <li>
+                            <a href="">Offers</a>
+                        </li>
+                        <li>
+                            <a href="">Contact Us</a>
+                        </li>
+                        <li>
+                            <div class="app-download-wrapper">
+
+                                <div class="download_txt">
+                                    <span class="download_title">Healthians App</span>
+                                    <span class="download_Rating"><img
+                                            src="https://stimg.cardekho.com/pwa/img/connecto/cd-star.png" alt=""> 4.6
+                                        Rating</span>
+                                    <span class="download_Offr">Get Amazing Offers on App</span>
+                                </div>
+                                <a href="#" class="hbg_Store"><img
+                                        src="https://stimg.cardekho.com/pwa/img/connecto/Playsore-Install-app.png"
+                                        alt=""></a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="list-wrapper">
+                    <button type="button" class="back-one-level">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                            <path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" />
+                        </svg>
+                        <span>Back</span>
+                    </button>
+                    <div class="sub-mobile-menu-wrapper"></div>
+                </div>
+                <div class="list-wrapper">
+                    <button type="button" class="back-one-level">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                            <path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" />
+                        </svg>
+                        <span>Back</span>
+                    </button>
+                    <div class="sub-mobile-menu-wrapper"></div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"
+        integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        const pageHeader = document.querySelector(".mobile-page-header");
+        const toggleMenu = pageHeader.querySelector(".toggle-menu");
+        const menuWrapper = pageHeader.querySelector(".mobile-menu-wrapper");
+        const level1Links = pageHeader.querySelectorAll(".level-1 > li > a");
+        const listWrapper2 = pageHeader.querySelector(".list-wrapper:nth-child(2)");
+        const listWrapper3 = pageHeader.querySelector(".list-wrapper:nth-child(3)");
+        const subMenuWrapper2 = listWrapper2.querySelector(".sub-mobile-menu-wrapper");
+        const subMenuWrapper3 = listWrapper3.querySelector(".sub-mobile-menu-wrapper");
+        const backOneLevelBtns = pageHeader.querySelectorAll(".back-one-level");
+        const backLabel2 = listWrapper2.querySelector(".back-one-level span");
+        const backLabel3 = listWrapper3.querySelector(".back-one-level span");
+        const isVisibleClass = "is-visible";
+        const isActiveClass = "is-active";
+
+        toggleMenu.addEventListener("click", function (e) {
+            e.stopPropagation()
+            menuWrapper.classList.toggle(isVisibleClass);
+            if (!this.classList.contains(isVisibleClass)) {
+                listWrapper2.classList.remove(isVisibleClass);
+                listWrapper3.classList.remove(isVisibleClass);
+                const menuLinks = menuWrapper.querySelectorAll("a");
+                for (const menuLink of menuLinks) {
+                    menuLink.classList.remove(isActiveClass);
+                }
+                backLabel2.textContent = "";
+                backLabel3.textContent = "";
+            }
+        });
+
+        for (const level1Link of level1Links) {
+            level1Link.addEventListener("click", function (e) {
+                const siblingList = level1Link.nextElementSibling;
+                if (siblingList) {
+                    e.preventDefault();
+                    this.classList.add(isActiveClass);
+                    const cloneSiblingList = siblingList.cloneNode(true);
+                    subMenuWrapper2.innerHTML = "";
+                    subMenuWrapper2.append(cloneSiblingList);
+                    listWrapper2.classList.add(isVisibleClass);
+                    backLabel2.textContent = level1Link.textContent;
+                }
+            });
+        }
+
+        listWrapper2.addEventListener("click", function (e) {
+            const target = e.target;
+            if (target.tagName.toLowerCase() === "a" && target.nextElementSibling) {
+                const siblingList = target.nextElementSibling;
+                e.preventDefault();
+                target.classList.add(isActiveClass);
+                const cloneSiblingList = siblingList.cloneNode(true);
+                subMenuWrapper3.innerHTML = "";
+                subMenuWrapper3.append(cloneSiblingList);
+                listWrapper3.classList.add(isVisibleClass);
+                backLabel3.textContent = target.textContent;
+            }
+        });
+
+        for (const backOneLevelBtn of backOneLevelBtns) {
+            backOneLevelBtn.addEventListener("click", function () {
+                const parent = this.closest(".list-wrapper");
+                parent.classList.remove(isVisibleClass);
+                parent.previousElementSibling
+                    .querySelector(".is-active")
+                    .classList.remove(isActiveClass);
+            });
+        }
+
+
+
+        document.addEventListener('click', function handleClickOutsideBox(e) {
+            const hide_menu = document.getElementById('mobile-menu-id');
+            if (!hide_menu.contains(event.target)) {
+                hide_menu.classList.remove('is-visible');
+            }
+        });
+
+
+    </script>
+
+
+
+</body>
+
+</html>
